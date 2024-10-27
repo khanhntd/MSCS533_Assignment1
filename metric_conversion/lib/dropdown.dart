@@ -14,14 +14,21 @@ class MeasurementDropDown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<String>(
+    return DropdownButtonFormField<String>(
       value: currentMeasurement,
-      icon: const Icon(Icons.arrow_downward),
+      icon: const Icon(Icons.arrow_downward, color: Colors.deepPurpleAccent),
       elevation: 16,
       style: const TextStyle(color: Colors.deepPurple),
-      underline: Container(
-        height: 2,
-        color: Colors.deepPurpleAccent,
+      decoration: const InputDecoration(
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.deepPurpleAccent),
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.deepPurpleAccent),
+        ),
+        border: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.deepPurpleAccent),
+        ),
       ),
       onChanged: onChanged,
       items: measurementOptions.map<DropdownMenuItem<String>>((String value) {

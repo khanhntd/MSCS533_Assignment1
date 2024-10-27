@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class _MeasureConverterState extends State<MeasureConverter> {
   double initialConversionValue = 100.0;
   double finalConversionValue = 0.0;
 
-  _MeasureConverterState(){
+  _MeasureConverterState() {
     finalConversionValue = calculateConversion(
         currentMeasurement,
         currentMeasurement == 'Meter' ? currentMeter : currentWeight,
@@ -58,65 +59,117 @@ class _MeasureConverterState extends State<MeasureConverter> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
+            Container(
+              margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+              child: const Text(
               'Value',
+              style: TextStyle(fontSize: 16),
             ),
-            MeasurementDropDown(
-              currentMeasurement: currentMeasurement,
-              measurementOptions: listOfMeasurements,
-              onChanged: (String? measurement) {
-                setState(() {
-                  currentMeasurement = measurement!;
-                });
-              },
             ),
-            const Text(
+            SizedBox(
+              width: 400,
+              child: TextField(
+                style: const TextStyle(color: Colors.deepPurple),
+                decoration: const InputDecoration(
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.deepPurpleAccent),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.deepPurpleAccent),
+                  ),
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.deepPurpleAccent),
+                  ),
+                ),
+                onChanged: (String? value) {
+                  setState(() {
+                    initialConversionValue = double.parse(value.toString());
+                    finalConversionValue = calculateConversion(
+                        currentMeasurement,
+                        currentMeasurement == 'Meter'
+                            ? currentMeter
+                            : currentWeight,
+                        initialConversionValue);
+                  });
+                },
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+              child: const Text(
               'From',
+              style: TextStyle(fontSize: 16),
+            ),),
+            SizedBox(
+                width: 400,
+                child: MeasurementDropDown(
+                  currentMeasurement: currentMeasurement,
+                  measurementOptions: listOfMeasurements,
+                  onChanged: (String? measurement) {
+                    setState(() {
+                      currentMeasurement = measurement;
+                      finalConversionValue = calculateConversion(
+                          currentMeasurement,
+                          currentMeasurement == 'Meter'
+                              ? currentMeter
+                              : currentWeight,
+                          initialConversionValue);
+                    });
+                  },
+                )),
+             Container(
+              margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+              child: const Text(
+                'To',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
-            MeasurementDropDown(
-              currentMeasurement: currentMeasurement,
-              measurementOptions: listOfMeasurements,
-              onChanged: (String? measurement) {
+            SizedBox(
+                width: 400,
+                child: MeasurementDropDown(
+                  currentMeasurement: currentMeasurement == 'Meter'
+                      ? currentMeter
+                      : currentWeight,
+                  measurementOptions: currentMeasurement == 'Meter'
+                      ? meterConversion
+                      : weightConversion,
+                  onChanged: (String? measurement) {
+                    setState(() {
+                      if (currentMeasurement == 'Meter') {
+                        currentMeter = measurement;
+                      } else {
+                        currentWeight = measurement;
+                      }
+                      finalConversionValue = calculateConversion(
+                          currentMeasurement,
+                          currentMeasurement == 'Meter'
+                              ? currentMeter
+                              : currentWeight,
+                          initialConversionValue);
+                    });
+                  },
+                )),
+            TextButton(
+              onPressed: () {
                 setState(() {
-                  currentMeasurement = measurement!;
+                  finalConversionValue = calculateConversion(
+                      currentMeasurement,
+                      currentMeasurement == 'Meter'
+                          ? currentMeter
+                          : currentWeight,
+                      initialConversionValue);
                 });
               },
-            ),
-            const Text(
-              'To',
-            ),
-            MeasurementDropDown(
-              currentMeasurement:
-                  currentMeasurement == 'Meter' ? currentMeter : currentWeight,
-              measurementOptions: currentMeasurement == 'Meter'
-                  ? meterConversion
-                  : weightConversion,
-              onChanged: (String? measurement) {
-                setState(() {
-                  if (currentMeasurement == 'Meter') {
-                    currentMeter = measurement;
-                  } else {
-                    currentWeight = measurement;
-                  }
-                });
-              },
+              child: const Text(
+                'Convert',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
             Text(currentMeasurement == 'Meter'
                 ? '$initialConversionValue $currentMeasurement are $finalConversionValue $currentMeter.'
-                : '$initialConversionValue $currentMeasurement are $finalConversionValue $currentWeight.'),
-            TextButton(
-              style: ButtonStyle(
-                overlayColor: WidgetStateProperty.resolveWith<Color?>(
-                    (Set<WidgetState> states) {
-                  if (states.contains(WidgetState.focused)) return Colors.red;
-                  return null; // Defer to the widget's default.
-                }),
-              ),
-              onPressed: () {
-                finalConversionValue = calculateConversion(currentMeasurement, currentMeasurement == 'Meter' ? currentMeter : currentWeight, initialConversionValue);
-              },
-              child: const Text('Convert'),
-            )
+                : '$initialConversionValue $currentMeasurement are $finalConversionValue $currentWeight.',
+                style: const TextStyle(fontSize: 14),
+            ),
           ],
         ),
       ),

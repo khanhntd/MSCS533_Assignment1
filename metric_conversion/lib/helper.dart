@@ -1,5 +1,6 @@
 import 'const.dart';
 
+// calculateConversion will calculate the final conversion based on the target measurement and initial conversion value
 double calculateConversion(String? measurement, String? targetMeasurement, double initialConversionValue) {
   if (measurement == 'Meter') {
     switch (targetMeasurement) {
